@@ -2,7 +2,7 @@
   "name": "Reservasi SP Online",
   "short_name": "Reservasi SP",
   "description": "Reservasi Sparepart — GDSP Jayanti 2",
-  "start_url": "./app.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0f2a5c",
