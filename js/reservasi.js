@@ -1,21 +1,24 @@
 // ============================================================================
-// HALAMAN RESERVASI — 2 tab: "Ajukan" (cari & pilih barang dari SELURUH
-// Master Data, isi qty & keterangan) & "Status Saya" (daftar reservasi yang
-// sudah diajukan + statusnya).
+// HALAMAN RESERVASI — 2 tab: "Ajukan" & "Status Saya".
 //
-// CATATAN PERUBAHAN (atas permintaan Bos): sebelumnya picker cuma nampilin
-// "stock milik sendiri" (Sumber=USER+nama sendiri sesuai mekanisme yang
-// sudah ada, lewat Api.getStockMilikUser) — sekarang user bisa ajukan
-// reservasi barang APA SAJA dari Master Data, tidak harus yang sudah
-// tercatat atas namanya. Pakai Api.getKatalogBarang (SEMUA Kode Barang,
-// termasuk yang onHand 0) + search box client-side (kode/nama). onHand
-// ditampilkan SEKADAR referensi, TIDAK membatasi Qty yang boleh diajukan —
-// GDSP yang menilai feasible/tidak pas Approval. Api.getStockMilikUser masih
-// ada di backend (tidak dihapus), cuma sudah tidak dipanggil dari sini lagi.
+// Tab "Ajukan" punya 2 bagian pilih barang (atas permintaan Bos, dipisah
+// biar jelas mana yang mana — sebelumnya sempat digabung jadi 1 daftar &
+// bikin bingung karena judulnya masih "stock milik kamu" tapi isinya semua
+// barang):
+//   1. "Stock Milik Saya" — SEBELUMNYA doang, dari Api.getStockMilikUser
+//      (mekanisme Sumber=USER+nama sendiri yang sudah ada di W-SMART).
+//      Nampilin qty stock, Qty yang diajukan DIBATASI maksimal sejumlah itu.
+//   2. "Ajukan Barang Lain" — dari Api.getKatalogBarang (SEMUA Kode Barang
+//      di Master Data, termasuk yang onHand 0), ada search box karena
+//      daftarnya bisa panjang. SENGAJA TIDAK menampilkan angka stock di
+//      sini (beda dari bagian 1) & Qty TIDAK dibatasi — GDSP yang menilai
+//      feasible/tidak pas Approval.
+// Keduanya submit ke form yang SAMA di bawah (createReservasi sama persis).
 // ============================================================================
 
+let reservasiMilikList = [];
 let reservasiKatalogList = [];
-let reservasiSelectedItem = null;
+let reservasiSelectedItem = null; // { kode, namaBarang, satuan, plant, qty?, source: 'milik'|'katalog' }
 let reservasiPageLoadedOnce = false;
 let reservasiSearchTerm = '';
 
@@ -41,6 +44,66 @@ function wireReservasiTabs() {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Bagian 1 — Stock Milik Saya
+// ---------------------------------------------------------------------------
+async function loadReservasiMilik() {
+  const box = document.getElementById('reservasiMilikList');
+  box.innerHTML = '<div class="empty-state">Memuat stock...</div>';
+  try {
+    const res = await Api.getStockMilikUser();
+    reservasiMilikList = (res.data || []).map((it, idx) => Object.assign({ _idx: idx }, it));
+    renderReservasiMilik();
+  } catch (err) {
+    box.innerHTML = '<div class="empty-state">Gagal memuat stock: ' + err.message + '</div>';
+  }
+}
+
+function renderReservasiMilik() {
+  const box = document.getElementById('reservasiMilikList');
+  if (!reservasiMilikList.length) {
+    box.innerHTML = '<div class="empty-state">Belum ada stock yang tercatat atas nama kamu.</div>';
+    return;
+  }
+  box.innerHTML = reservasiMilikList.map((it) => `
+    <div class="stock-pick-item" data-idx="${it._idx}">
+      <div>
+        <div class="stock-pick-name">${it.kode} — ${it.namaBarang || '-'}</div>
+        <div class="stock-pick-meta">${it.plant ? 'Plant ' + it.plant : '(tanpa Plant)'} · ${it.satuan || ''}</div>
+      </div>
+      <div class="stock-pick-qty">${it.qty}</div>
+    </div>
+  `).join('');
+  box.querySelectorAll('.stock-pick-item').forEach((el) => {
+    el.addEventListener('click', () => selectReservasiMilikItem(Number(el.dataset.idx)));
+  });
+}
+
+function selectReservasiMilikItem(idx) {
+  const item = reservasiMilikList.find((it) => it._idx === idx);
+  if (!item) return;
+  reservasiSelectedItem = Object.assign({ source: 'milik' }, item);
+
+  // Highlight cuma di list ini, list "Ajukan Barang Lain" ikut di-clear.
+  document.querySelectorAll('#reservasiMilikList .stock-pick-item').forEach((el) => {
+    el.classList.toggle('selected', Number(el.dataset.idx) === idx);
+  });
+  document.querySelectorAll('#reservasiStockPickerList .stock-pick-item').forEach((el) => {
+    el.classList.remove('selected');
+  });
+
+  document.getElementById('reservasiFormFields').hidden = false;
+  document.getElementById('reservasiSelectedLabel').textContent = item.kode + ' — ' + (item.namaBarang || '-');
+  document.getElementById('reservasiStockHint').textContent = 'Stock kamu: ' + item.qty + ' ' + (item.satuan || '');
+  const qtyInput = document.getElementById('reservasiQty');
+  qtyInput.max = item.qty;
+  qtyInput.value = '';
+}
+
+// ---------------------------------------------------------------------------
+// Bagian 2 — Ajukan Barang Lain (katalog SEMUA Kode Barang, tanpa angka
+// stock ditampilkan, Qty bebas tidak dibatasi)
+// ---------------------------------------------------------------------------
 async function loadReservasiKatalog() {
   const box = document.getElementById('reservasiStockPickerList');
   box.innerHTML = '<div class="empty-state">Memuat daftar barang...</div>';
@@ -72,19 +135,16 @@ function renderReservasiKatalog() {
   }
 
   const shown = filtered.slice(0, RESERVASI_KATALOG_MAX_SHOWN);
-  let html = shown.map((it) => {
-    const adaStock = Number(it.onHand) > 0;
-    const stockText = adaStock ? 'Stock: ' + it.onHand : 'Stock kosong';
-    return `
+  // SENGAJA TIDAK ada .stock-pick-qty di sini -- bagian ini nggak nampilin
+  // angka stock sama sekali (beda dari "Stock Milik Saya" di atas).
+  let html = shown.map((it) => `
     <div class="stock-pick-item" data-idx="${it._idx}">
       <div>
         <div class="stock-pick-name">${it.kode} — ${it.namaBarang || '-'}</div>
         <div class="stock-pick-meta">${it.plant ? 'Plant ' + it.plant : '(tanpa Plant)'} · ${it.satuan || ''}</div>
       </div>
-      <div class="stock-pick-qty${adaStock ? '' : ' stock-pick-qty-empty'}">${stockText}</div>
     </div>
-  `;
-  }).join('');
+  `).join('');
 
   if (filtered.length > shown.length) {
     html += '<div class="empty-state">Menampilkan ' + shown.length + ' dari ' + filtered.length + ' hasil — ketik lebih spesifik buat mempersempit pencarian.</div>';
@@ -106,22 +166,30 @@ function wireReservasiSearch() {
 }
 
 function selectReservasiKatalogItem(idx) {
-  reservasiSelectedItem = reservasiKatalogList.find((it) => it._idx === idx);
-  if (!reservasiSelectedItem) return;
+  const item = reservasiKatalogList.find((it) => it._idx === idx);
+  if (!item) return;
+  reservasiSelectedItem = Object.assign({ source: 'katalog' }, item);
+
   document.querySelectorAll('#reservasiStockPickerList .stock-pick-item').forEach((el) => {
     el.classList.toggle('selected', Number(el.dataset.idx) === idx);
   });
+  document.querySelectorAll('#reservasiMilikList .stock-pick-item').forEach((el) => {
+    el.classList.remove('selected');
+  });
+
   document.getElementById('reservasiFormFields').hidden = false;
-  document.getElementById('reservasiSelectedLabel').textContent = reservasiSelectedItem.kode + ' — ' + (reservasiSelectedItem.namaBarang || '-');
-  const hint = document.getElementById('reservasiStockHint');
-  if (hint) {
-    hint.textContent = Number(reservasiSelectedItem.onHand) > 0
-      ? 'Stock saat ini di gudang: ' + reservasiSelectedItem.onHand + ' ' + (reservasiSelectedItem.satuan || '')
-      : 'Stock saat ini kosong — tetap bisa diajukan, nanti GDSP yang proses.';
-  }
-  document.getElementById('reservasiQty').value = '';
+  document.getElementById('reservasiSelectedLabel').textContent = item.kode + ' — ' + (item.namaBarang || '-');
+  // Tidak nampilin angka stock di sini (sesuai permintaan) -- cukup kasih
+  // tau ini di luar stock yang tercatat atas nama sendiri.
+  document.getElementById('reservasiStockHint').textContent = 'Barang ini di luar stock yang tercatat atas nama kamu — GDSP yang akan proses.';
+  const qtyInput = document.getElementById('reservasiQty');
+  qtyInput.removeAttribute('max'); // Qty bebas, tidak dibatasi
+  qtyInput.value = '';
 }
 
+// ---------------------------------------------------------------------------
+// Form Ajukan Reservasi (dipakai bareng oleh 2 bagian di atas)
+// ---------------------------------------------------------------------------
 function wireReservasiForm() {
   const form = document.getElementById('reservasiForm');
   if (!form) return;
@@ -135,6 +203,10 @@ function wireReservasiForm() {
     const keterangan = document.getElementById('reservasiKeterangan').value.trim();
     if (!qty || qty <= 0) {
       showToast('Qty wajib diisi & lebih dari 0.', 'error');
+      return;
+    }
+    if (reservasiSelectedItem.source === 'milik' && qty > reservasiSelectedItem.qty) {
+      showToast('Qty melebihi stock yang tersedia (' + reservasiSelectedItem.qty + ').', 'error');
       return;
     }
     const btn = document.getElementById('btnReservasiSubmit');
@@ -154,6 +226,7 @@ function wireReservasiForm() {
       form.reset();
       reservasiSelectedItem = null;
       document.getElementById('reservasiFormFields').hidden = true;
+      loadReservasiMilik();
       renderReservasiKatalog();
     } catch (err) {
       showToast(err.message, 'error');
@@ -199,5 +272,6 @@ function initReservasiPage() {
     wireReservasiForm();
     wireReservasiSearch();
   }
+  loadReservasiMilik();
   loadReservasiKatalog();
 }
