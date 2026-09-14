@@ -82,7 +82,9 @@ function resetSpkForm() {
   document.getElementById('spkForm').reset();
   document.getElementById('spkFieldsPerbaikanUnit').hidden = true;
   document.getElementById('spkFieldsFabrikasi').hidden = true;
-  document.getElementById('spkFotoPreview').hidden = true;
+  const preview = document.getElementById('spkFotoPreview');
+  preview.hidden = true;
+  preview.removeAttribute('src'); // defensif — lihat fix .foto-upload-preview:not([hidden]) di style.css
   document.getElementById('spkFotoStatus').textContent = '';
   spkFotoSebelumHasil = null;
   spkFotoSebelumUrl = '';
@@ -163,6 +165,33 @@ async function loadSpkStatusList() {
   }
 }
 
+// Ekstrak file ID dari URL Drive (hasil file.getUrl(), format .../d/<id>/view)
+// supaya bisa ditampilkan sebagai <img> thumbnail LANGSUNG di dalam app —
+// bukan link yang buka tab baru & minta pilih akun Google (sama polanya
+// dengan driveThumbUrl_ di W-SMART/js/spk-online.js, disalin ke sini karena
+// file JS repo ini terpisah). Kalau formatnya beda/gagal di-parse, fallback
+// ke link biasa. `size` dipakai buat bikin versi lebih besar (dipakai pas
+// diklik buat "zoom") — TETAP lewat endpoint thumbnail, BUKAN link share
+// asli, supaya klik foto TIDAK minta login/pilih akun Google.
+function driveThumbUrl_(url, size) {
+  if (!url) return '';
+  const m = String(url).match(/\/d\/([^/]+)/);
+  return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w${size || 800}` : '';
+}
+
+function spkFotoHtml_(url, label) {
+  if (!url) return '';
+  const thumb = driveThumbUrl_(url, 800);
+  const zoom = driveThumbUrl_(url, 1600);
+  if (thumb) {
+    // href ke versi thumbnail lebih besar (bukan url Drive asli) -> klik foto
+    // buka tab baru yang langsung nampilin gambar, TANPA diminta login/pilih
+    // akun Google (beda dari sebelumnya yang link ke share url Drive asli).
+    return `<div class="spk-foto-row"><a href="${zoom}" target="_blank" rel="noopener"><img src="${thumb}" class="foto-upload-preview" alt="${label}"></a></div>`;
+  }
+  return `<p><a href="${url}" target="_blank" rel="noopener">Lihat ${label}</a></p>`;
+}
+
 async function openSpkDetail(idSpk, dataList) {
   const spk = dataList.find((s) => s.idSpk === idSpk);
   if (!spk) return;
@@ -174,8 +203,8 @@ async function openSpkDetail(idSpk, dataList) {
     <p>${spk.deskripsi}</p>
     ${spk.targetTanggalPengerjaan ? '<p>Target Tanggal Pengerjaan: ' + spk.targetTanggalPengerjaan + '</p>' : ''}
     ${spk.catatanApproval ? '<p>Catatan: ' + spk.catatanApproval + '</p>' : ''}
-    ${spk.fotoSebelum ? '<p><a href="' + spk.fotoSebelum + '" target="_blank" rel="noopener">Lihat Foto Sebelum</a></p>' : ''}
-    ${spk.fotoSelesai ? '<p><a href="' + spk.fotoSelesai + '" target="_blank" rel="noopener">Lihat Foto Selesai</a></p>' : ''}
+    ${spkFotoHtml_(spk.fotoSebelum, 'Foto Sebelum')}
+    ${spkFotoHtml_(spk.fotoSelesai, 'Foto Selesai')}
     <div id="spkDetailLogList"><div class="empty-state">Memuat riwayat...</div></div>
   `;
   document.getElementById('spkDetailModalBackdrop').hidden = false;
