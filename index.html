@@ -166,20 +166,103 @@
         <div id="reservasiStockPickerList"></div>
       </div>
 
-      <form id="reservasiForm" class="card" style="margin-top:14px;">
-        <div id="reservasiFormFields" hidden>
-          <p class="hint-text">Barang dipilih: <strong id="reservasiSelectedLabel"></strong></p>
-          <p class="hint-text" id="reservasiStockHint"></p>
-          <div class="form-row">
-            <label>Qty Diminta</label>
-            <input type="number" id="reservasiQty" min="1" step="1" placeholder="Jumlah yang diminta" required>
-          </div>
-          <div class="form-row">
-            <label>Kebutuhan / Keterangan</label>
-            <textarea id="reservasiKeterangan" rows="3" placeholder="Buat mesin apa / keperluan apa (opsional)"></textarea>
-          </div>
-          <button type="submit" id="btnReservasiSubmit" class="btn btn-primary btn-block">Ajukan Reservasi</button>
+      <div class="card" style="margin-top:14px;">
+        <div class="items-header">
+          <span>Barang Dipilih</span>
+          <span id="reservasiCartCount"></span>
         </div>
+        <p class="hint-text" id="reservasiSlocHint" hidden></p>
+        <div id="reservasiCartList"></div>
+      </div>
+
+      <form id="reservasiForm" class="card" style="margin-top:14px;">
+        <div class="section-eyebrow">Detail Permintaan</div>
+
+        <div class="form-row">
+          <label>Line</label>
+          <input type="text" id="reservasiLine" placeholder="Line" required>
+        </div>
+        <div class="form-row">
+          <label>Group</label>
+          <input type="text" id="reservasiGroup" placeholder="Group" required>
+        </div>
+        <div class="form-row">
+          <label>Pelaksana Lapangan</label>
+          <select id="reservasiPelaksana" required>
+            <option value="">Pilih Pelaksana Lapangan</option>
+            <option value="Electric">Electric</option>
+            <option value="Mechanic">Mechanic</option>
+            <option value="Utility">Utility</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Nama Equipment</label>
+          <input type="text" id="reservasiNamaEquipment" placeholder="Nama equipment" required>
+        </div>
+        <div class="form-row">
+          <label>Nomor Equipment</label>
+          <input type="text" id="reservasiNomorEquipment" placeholder="Nomor equipment (opsional)">
+        </div>
+        <div class="item-row-grid">
+          <div class="form-row">
+            <label>Nama Sub Equipment 1</label>
+            <input type="text" id="reservasiSubEq1Nama" placeholder="(opsional)">
+          </div>
+          <div class="form-row">
+            <label>No Sub Equipment 1</label>
+            <input type="text" id="reservasiSubEq1No" placeholder="(opsional)">
+          </div>
+        </div>
+        <div class="item-row-grid">
+          <div class="form-row">
+            <label>Nama Sub Equipment 2</label>
+            <input type="text" id="reservasiSubEq2Nama" placeholder="(opsional)">
+          </div>
+          <div class="form-row">
+            <label>No Sub Equipment 2</label>
+            <input type="text" id="reservasiSubEq2No" placeholder="(opsional)">
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Alasan Permintaan Barang</label>
+          <select id="reservasiAlasan" required>
+            <option value="">Pilih Alasan</option>
+            <option value="Perbaikan Equipment">Perbaikan Equipment</option>
+            <option value="Proyek 5R">Proyek 5R</option>
+            <option value="Perawatan Equipment">Perawatan Equipment</option>
+            <option value="Proyek GMP">Proyek GMP</option>
+            <option value="Lain-lain">Lain-lain</option>
+          </select>
+          <input type="text" id="reservasiAlasanLain" class="form-row-lain" placeholder="Sebutkan alasan lainnya" hidden style="margin-top:8px;">
+        </div>
+        <div class="form-row">
+          <label>Uraian Pekerjaan</label>
+          <select id="reservasiUraian" required>
+            <option value="">Pilih Uraian Pekerjaan</option>
+            <option value="Pembuatan">Pembuatan</option>
+            <option value="Perbaikan">Perbaikan</option>
+            <option value="Perawatan">Perawatan</option>
+            <option value="Pemasangan">Pemasangan</option>
+            <option value="Pemindahan">Pemindahan</option>
+            <option value="Kebutuhan Rutin">Kebutuhan Rutin</option>
+            <option value="Lain-lain">Lain-lain</option>
+          </select>
+          <input type="text" id="reservasiUraianLain" class="form-row-lain" placeholder="Sebutkan uraian pekerjaan lainnya" hidden style="margin-top:8px;">
+        </div>
+        <div class="form-row">
+          <label>Referency</label>
+          <input type="text" id="reservasiReferency" placeholder="Referency (opsional)">
+        </div>
+        <div class="form-row">
+          <label>Maintenance Order</label>
+          <input type="text" id="reservasiMaintenanceOrder" placeholder="Nomor Maintenance Order (opsional)">
+        </div>
+        <div class="form-row">
+          <label>Kebutuhan / Keterangan</label>
+          <textarea id="reservasiKeterangan" rows="3" placeholder="Buat mesin apa / keperluan apa" required></textarea>
+        </div>
+        <div id="reservasiFormError" class="form-error" hidden></div>
+        <button type="submit" id="btnReservasiSubmit" class="btn btn-primary btn-block">Ajukan Reservasi</button>
       </form>
     </div>
 
