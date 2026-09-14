@@ -5,7 +5,7 @@
 // ============================================================================
 
 const APP_VERSION = '1.0.0';
-const CACHE_NAME = 'reservasi-spk-shell-v' + APP_VERSION;
+const CACHE_NAME = 'v.' + APP_VERSION;
 const APP_SHELL = [
   './',
   './index.html',
