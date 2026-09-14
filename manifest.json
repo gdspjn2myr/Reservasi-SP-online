@@ -1,7 +1,7 @@
 {
-  "name": "Reservasi Sparepart Online",
+  "name": "Reservasi SP Online",
   "short_name": "Reservasi SP",
-  "description": "Reservasi Sparepart GDSP Jayanti 2",
+  "description": "Reservasi Sparepart — GDSP Jayanti 2",
   "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",
