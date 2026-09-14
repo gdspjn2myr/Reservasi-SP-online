@@ -71,6 +71,7 @@ const Api = {
   logout: (payload) => callApi('logout', payload),
 
   getStockMilikUser: () => callApi('getStockMilikUser'),
+  getKatalogBarang: () => callApi('getKatalogBarang'),
 
   createReservasi: (payload) => callApi('createReservasi', payload),
   getReservasiList: (payload) => callApi('getReservasiList', payload),
