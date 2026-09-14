@@ -8,5 +8,5 @@
 
 window.RESERVASI_CONFIG = {
   WORKER_URL: 'https://reservasisp.gdsp-jn2myr.workers.dev/',
-  APP_NAME: 'Reservasi & SPK Online'
+  APP_NAME: 'Reservasi SP Online'
 };
