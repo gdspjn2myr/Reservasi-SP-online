@@ -154,13 +154,22 @@
 
     <div id="reservasiTabAjukan" class="simple-tab-panel">
       <div class="card">
-        <div class="section-eyebrow">Pilih Barang (stock milik kamu)</div>
+        <div class="section-eyebrow">Stock Milik Saya</div>
+        <div id="reservasiMilikList"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <div class="section-eyebrow">Ajukan Barang Lain</div>
+        <div class="form-row" style="margin-top:8px;">
+          <input type="text" id="reservasiKatalogSearch" placeholder="Cari kode / nama barang...">
+        </div>
         <div id="reservasiStockPickerList"></div>
       </div>
 
       <form id="reservasiForm" class="card" style="margin-top:14px;">
         <div id="reservasiFormFields" hidden>
           <p class="hint-text">Barang dipilih: <strong id="reservasiSelectedLabel"></strong></p>
+          <p class="hint-text" id="reservasiStockHint"></p>
           <div class="form-row">
             <label>Qty Diminta</label>
             <input type="number" id="reservasiQty" min="1" step="1" placeholder="Jumlah yang diminta" required>
