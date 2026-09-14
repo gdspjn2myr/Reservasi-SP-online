@@ -4,12 +4,11 @@
 // dapat notif "Versi baru tersedia".
 // ============================================================================
 
-const APP_VERSION = '1.0.3';
-const CACHE_NAME = 'v.' + APP_VERSION;
+const APP_VERSION = '1.0.5';
+const CACHE_NAME = 'v-' + APP_VERSION;
 const APP_SHELL = [
   './',
   './index.html',
-  './app.html',
   './manifest.json',
   './css/style.css',
   './js/config.js',
