@@ -2548,7 +2548,7 @@ body {
 .entry-card-flags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 .empty-state { text-align: center; color: var(--text-muted); padding: 32px 16px; font-size: 14px; }
 
-/* Pilih item dari "stock milik saya" (Reservasi) */
+/* Cari & pilih barang dari katalog Master Data (Reservasi) */
 .stock-pick-item {
   display: flex; justify-content: space-between; align-items: center; gap: 10px;
   padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px;
@@ -2559,6 +2559,7 @@ body {
 .stock-pick-name { font-weight: 600; font-size: 13.5px; }
 .stock-pick-meta { font-size: 12px; color: var(--text-muted); }
 .stock-pick-qty { font-weight: 700; color: var(--navy); font-size: 13.5px; white-space: nowrap; }
+.stock-pick-qty-empty { color: var(--text-muted); font-weight: 600; }
 
 /* Upload foto (SPK) */
 .foto-upload-box {
@@ -2566,8 +2567,16 @@ body {
   cursor: pointer; transition: border-color .2s ease, background .2s ease;
 }
 .foto-upload-box:hover { border-color: var(--navy-light); background: #f7f9fd; }
-.foto-upload-preview { max-width: 100%; max-height: 220px; border-radius: 10px; margin-top: 10px; display: block; }
+/* PENTING: pakai :not([hidden]), BUKAN ".foto-upload-preview { display: block }"
+   polos — kalau polos, "display:block" di sini MENANG ketimbang default
+   browser "[hidden] { display: none }" walau specificity-nya sama (author
+   style vs UA style), jadi preview foto lama tetap kelihatan walau elemennya
+   sudah di-reset ke hidden=true (bug nyata yang ditemukan Bos: foto SPK
+   sebelumnya tidak hilang pas mulai isi SPK baru). */
+.foto-upload-preview:not([hidden]) { max-width: 100%; max-height: 220px; border-radius: 10px; margin-top: 10px; display: block; }
 .foto-upload-status { font-size: 12.5px; color: var(--text-muted); margin-top: 6px; }
+.spk-foto-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+.spk-foto-row img { max-height: 160px; border-radius: 10px; border: 1px solid var(--border); }
 
 /* Timeline log SPK (Feedback Kebutuhan / Update Harian) */
 .spk-log-item { border-left: 3px solid var(--navy-light); padding: 4px 0 4px 12px; margin-bottom: 10px; }
