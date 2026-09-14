@@ -187,9 +187,12 @@ function spkFotoHtml_(url, label) {
     // href ke versi thumbnail lebih besar (bukan url Drive asli) -> klik foto
     // buka tab baru yang langsung nampilin gambar, TANPA diminta login/pilih
     // akun Google (beda dari sebelumnya yang link ke share url Drive asli).
-    return `<div class="spk-foto-row"><a href="${zoom}" target="_blank" rel="noopener"><img src="${thumb}" class="foto-upload-preview" alt="${label}"></a></div>`;
+    // Label ditampilkan sebagai caption TEKS di atas foto (sebelumnya cuma
+    // ada di atribut alt yang tidak kelihatan sama sekali di halaman biasa —
+    // ini yang bikin Bos gabisa bedain mana Foto Sebelum vs Foto Selesai).
+    return `<div class="spk-foto-row"><div class="spk-foto-block"><div class="spk-foto-caption">${label}</div><a href="${zoom}" target="_blank" rel="noopener"><img src="${thumb}" class="foto-upload-preview" alt="${label}"></a></div></div>`;
   }
-  return `<p><a href="${url}" target="_blank" rel="noopener">Lihat ${label}</a></p>`;
+  return `<div class="spk-foto-row"><div class="spk-foto-block"><div class="spk-foto-caption">${label}</div><p><a href="${url}" target="_blank" rel="noopener">Lihat ${label}</a></p></div></div>`;
 }
 
 async function openSpkDetail(idSpk, dataList) {
