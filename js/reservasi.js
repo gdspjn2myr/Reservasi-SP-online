@@ -124,7 +124,15 @@ function renderReservasiKatalog() {
   }
 
   const term = reservasiSearchTerm.trim().toLowerCase();
-  const filtered = !term ? reservasiKatalogList : reservasiKatalogList.filter((it) =>
+  // SENGAJA TIDAK nampilin daftar penuh secara default -- baru muncul saran
+  // (suggest) pas user mulai ngetik kode/nama barang (atas permintaan Bos,
+  // daftar Master Data bisa panjang banget kalau ditampilkan semua).
+  if (!term) {
+    box.innerHTML = '<div class="empty-state">Ketik kode atau nama barang buat cari.</div>';
+    return;
+  }
+
+  const filtered = reservasiKatalogList.filter((it) =>
     String(it.kode).toLowerCase().indexOf(term) !== -1 ||
     String(it.namaBarang || '').toLowerCase().indexOf(term) !== -1
   );
