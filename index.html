@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Reservasi &amp; SPK Online</title>
+<meta name="description" content="Reservasi Sparepart &amp; SPK Online — GDSP Jayanti 2">
+<meta name="theme-color" content="#0f2a5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============================= LOGIN ============================= -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <img src="icons/icon-192.png" class="login-logo" alt="Logo Reservasi & SPK Online">
+    <div class="login-title">Reservasi &amp; SPK Online</div>
+    <div class="login-subtitle">Reservasi Sparepart &amp; Surat Perintah Kerja — GDSP Jayanti 2</div>
+
+    <form id="loginForm" class="login-form">
+      <div class="form-row">
+        <label>Username</label>
+        <input type="text" id="loginUsername" autocomplete="username" placeholder="Username kamu" required>
+      </div>
+      <div class="form-row">
+        <label>Password</label>
+        <div class="password-field">
+          <input type="password" id="loginPin" autocomplete="current-password" placeholder="Password" required>
+          <button type="button" class="toggle-password" data-target="loginPin" aria-label="Tampilkan Password">
+            <svg viewBox="0 0 24 24" class="icon-eye"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <svg viewBox="0 0 24 24" class="icon-eye-off" hidden><path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.24 4.24M9.5 5.2A10.4 10.4 0 0 1 12 5c7 0 10.5 7 10.5 7a13.4 13.4 0 0 1-3.15 3.9M6.3 6.3C3.4 8.1 1.5 12 1.5 12s3.5 7 10.5 7a10.4 10.4 0 0 0 3.1-.47" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="loginError" class="form-error" hidden></div>
+      <button type="submit" id="btnLoginSubmit" class="btn btn-primary btn-block">Masuk</button>
+      <button type="button" id="btnShowRegister" class="btn btn-link btn-block">Belum punya akun? Daftar di sini</button>
+    </form>
+
+    <form id="registerForm" class="login-form" hidden>
+      <div class="form-row">
+        <label>Nama Lengkap</label>
+        <input type="text" id="registerNama" autocomplete="name" placeholder="Nama lengkap kamu" required>
+      </div>
+      <div class="form-row">
+        <label>Username</label>
+        <input type="text" id="registerUsername" autocomplete="username" placeholder="Username yang mau dipakai" required>
+      </div>
+      <div class="form-row">
+        <label>Email</label>
+        <input type="email" id="registerEmail" autocomplete="email" placeholder="Email aktif kamu" required>
+      </div>
+      <div class="form-row">
+        <label>NIK</label>
+        <input type="text" id="registerNIK" inputmode="numeric" maxlength="20" placeholder="Nomor Induk Karyawan" required>
+      </div>
+      <div class="form-row">
+        <label>Plant</label>
+        <select id="registerPlant" required>
+          <option value="">Pilih Plant</option>
+          <option value="1111">1111</option>
+          <option value="1112">1112</option>
+          <option value="1113">1113</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Departement</label>
+        <select id="registerDepartemen" required>
+          <option value="">Pilih Plant dulu</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Password</label>
+        <div class="password-field">
+          <input type="password" id="registerPin" autocomplete="new-password" placeholder="Password (min 4 karakter)" required>
+          <button type="button" class="toggle-password" data-target="registerPin" aria-label="Tampilkan Password">
+            <svg viewBox="0 0 24 24" class="icon-eye"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <svg viewBox="0 0 24 24" class="icon-eye-off" hidden><path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.24 4.24M9.5 5.2A10.4 10.4 0 0 1 12 5c7 0 10.5 7 10.5 7a13.4 13.4 0 0 1-3.15 3.9M6.3 6.3C3.4 8.1 1.5 12 1.5 12s3.5 7 10.5 7a10.4 10.4 0 0 0 3.1-.47" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Ulangi Password</label>
+        <div class="password-field">
+          <input type="password" id="registerPinConfirm" autocomplete="new-password" placeholder="Ketik ulang Password" required>
+          <button type="button" class="toggle-password" data-target="registerPinConfirm" aria-label="Tampilkan Password">
+            <svg viewBox="0 0 24 24" class="icon-eye"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <svg viewBox="0 0 24 24" class="icon-eye-off" hidden><path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.24 4.24M9.5 5.2A10.4 10.4 0 0 1 12 5c7 0 10.5 7 10.5 7a13.4 13.4 0 0 1-3.15 3.9M6.3 6.3C3.4 8.1 1.5 12 1.5 12s3.5 7 10.5 7a10.4 10.4 0 0 0 3.1-.47" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <p class="md-preview-hint">Akun baru butuh persetujuan Admin dulu sebelum bisa dipakai login.</p>
+      <div id="registerError" class="form-error" hidden></div>
+      <div id="registerSuccess" class="form-success" hidden></div>
+      <button type="submit" id="btnRegisterSubmit" class="btn btn-primary btn-block">Daftar</button>
+      <button type="button" id="btnShowLogin" class="btn btn-link btn-block">Sudah punya akun? Masuk</button>
+    </form>
+  </div>
+</div>
+
+<div id="appShell" class="app-shell" hidden>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button type="button" id="btnMenuToggle" class="menu-toggle" aria-label="Buka menu" aria-expanded="false" aria-controls="sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+    </button>
+    <div class="topbar-title" id="pageTitle">Reservasi Sparepart</div>
+  </div>
+</header>
+
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-brand">
+    <img src="icons/icon-192.png" class="sidebar-logo" alt="Logo Reservasi & SPK Online">
+    <div>
+      <div class="sidebar-title">Reservasi &amp; SPK</div>
+      <div class="sidebar-subtitle">GDSP Jayanti 2</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#/reservasi" class="nav-item" data-nav="reservasi">
+      <svg viewBox="0 0 24 24" class="nav-icon"><rect x="4" y="4" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13" y="4" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="13" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 17.5 17 19l3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Reservasi Sparepart</span>
+    </a>
+    <a href="#/spk" class="nav-item" data-nav="spk">
+      <svg viewBox="0 0 24 24" class="nav-icon"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.7 2.7-2-2 2.7-2.7Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>SPK Online</span>
+    </a>
+  </nav>
+  <div id="sidebarUserBox" class="sidebar-user-box">
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name" id="sidebarUserName">—</div>
+      <div class="sidebar-user-role" id="sidebarUserRole">—</div>
+    </div>
+    <button type="button" id="btnLogout" class="sidebar-logout-btn" title="Keluar" aria-label="Keluar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+    </button>
+  </div>
+  <button type="button" id="sidebarFooter" class="sidebar-footer" title="Klik untuk cek update">Reservasi &amp; SPK <span id="sidebarVersion"></span></button>
+</aside>
+<div id="sidebarBackdrop" class="sidebar-backdrop" hidden></div>
+
+<main id="app" class="app-content">
+
+  <!-- ============================= RESERVASI ============================= -->
+  <section id="page-reservasi" class="page">
+    <div class="simple-tabs">
+      <button type="button" class="simple-tab-btn active" data-tab-target="reservasiTabAjukan">Ajukan</button>
+      <button type="button" class="simple-tab-btn" data-tab-target="reservasiTabStatus">Status Saya</button>
+    </div>
+
+    <div id="reservasiTabAjukan" class="simple-tab-panel">
+      <div class="card">
+        <div class="section-eyebrow">Pilih Barang (stock milik kamu)</div>
+        <div id="reservasiStockPickerList"></div>
+      </div>
+
+      <form id="reservasiForm" class="card" style="margin-top:14px;">
+        <div id="reservasiFormFields" hidden>
+          <p class="hint-text">Barang dipilih: <strong id="reservasiSelectedLabel"></strong></p>
+          <div class="form-row">
+            <label>Qty Diminta</label>
+            <input type="number" id="reservasiQty" min="1" step="1" placeholder="Jumlah yang diminta" required>
+          </div>
+          <div class="form-row">
+            <label>Kebutuhan / Keterangan</label>
+            <textarea id="reservasiKeterangan" rows="3" placeholder="Buat mesin apa / keperluan apa (opsional)"></textarea>
+          </div>
+          <button type="submit" id="btnReservasiSubmit" class="btn btn-primary btn-block">Ajukan Reservasi</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="reservasiTabStatus" class="simple-tab-panel" hidden>
+      <div id="reservasiStatusList"></div>
+    </div>
+  </section>
+
+  <!-- ============================= SPK ONLINE ============================= -->
+  <section id="page-spk" class="page">
+    <div class="simple-tabs">
+      <button type="button" class="simple-tab-btn active" data-tab-target="spkTabBuat">Buat SPK</button>
+      <button type="button" class="simple-tab-btn" data-tab-target="spkTabStatus">Status Saya</button>
+    </div>
+
+    <div id="spkTabBuat" class="simple-tab-panel">
+      <form id="spkForm" class="card">
+        <div class="form-row">
+          <label>Jenis Pengerjaan</label>
+          <select id="spkJenisPengerjaan" required>
+            <option value="">Pilih Jenis Pengerjaan</option>
+            <option value="Perbaikan Unit">Perbaikan Unit</option>
+            <option value="Fabrikasi">Fabrikasi</option>
+          </select>
+        </div>
+
+        <div id="spkFieldsPerbaikanUnit" hidden>
+          <div class="form-row">
+            <label>Jenis Unit</label>
+            <select id="spkJenisUnit"></select>
+          </div>
+          <div class="form-row">
+            <label>Nomor Unit / Serial Number</label>
+            <input type="text" id="spkNomorUnit" placeholder="Nomor unit / serial number">
+          </div>
+        </div>
+
+        <div id="spkFieldsFabrikasi" hidden>
+          <div class="form-row">
+            <label>Nama Item Fabrikasi</label>
+            <input type="text" id="spkNamaItemFabrikasi" placeholder="Nama item yang mau dibuat">
+          </div>
+          <div class="form-row">
+            <label>Area</label>
+            <input type="text" id="spkArea" placeholder="Area/lokasi pengerjaan">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Deskripsi Pengerjaan</label>
+          <textarea id="spkDeskripsi" rows="3" placeholder="Jelaskan pengerjaan yang dibutuhkan" required></textarea>
+        </div>
+
+        <div class="form-row">
+          <label>Foto Sebelum <span style="color:var(--red)">*wajib</span></label>
+          <div id="spkFotoUploadBox" class="foto-upload-box">
+            <span>Ketuk untuk pilih/ambil foto</span>
+            <input type="file" id="spkFotoInput" accept="image/*" capture="environment" hidden>
+            <img id="spkFotoPreview" class="foto-upload-preview" hidden>
+          </div>
+          <div id="spkFotoStatus" class="foto-upload-status"></div>
+        </div>
+
+        <button type="submit" id="btnSpkSubmit" class="btn btn-primary btn-block">Ajukan SPK</button>
+      </form>
+    </div>
+
+    <div id="spkTabStatus" class="simple-tab-panel" hidden>
+      <div id="spkStatusList"></div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- Detail SPK (timeline feedback/update harian) -->
+<div id="spkDetailModalBackdrop" class="modal-backdrop" hidden></div>
+<div id="spkDetailModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="spkDetailModalTitle">
+  <div class="modal-card card">
+    <div class="modal-header">
+      <span id="spkDetailModalTitle">SPK</span>
+      <button type="button" id="btnCloseSpkDetailModal" class="modal-close" aria-label="Tutup">×</button>
+    </div>
+    <div id="spkDetailModalBody"></div>
+  </div>
+</div>
+
+<!-- Modal konfirmasi umum (dipakai Keluar) -->
+<div id="confirmModalBackdrop" class="modal-backdrop" hidden></div>
+<div id="confirmModal" class="modal" hidden role="alertdialog" aria-modal="true" aria-labelledby="confirmModalTitle" aria-describedby="confirmModalMessage">
+  <div class="modal-card card confirm-modal-card">
+    <div class="modal-header">
+      <span id="confirmModalTitle">Konfirmasi</span>
+      <button type="button" id="btnCloseConfirmModal" class="modal-close" aria-label="Tutup">×</button>
+    </div>
+    <p class="hint-text" id="confirmModalMessage"></p>
+    <div class="confirm-modal-actions">
+      <button type="button" id="btnConfirmModalOk" class="btn btn-primary btn-block">OK</button>
+      <button type="button" id="btnConfirmModalCancel" class="btn-link">Batal</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<div id="updateBanner" class="update-banner" hidden>
+  <div class="update-banner-text">
+    <strong>Versi baru tersedia</strong>
+    <span id="updateBannerVersion"></span>
+  </div>
+  <div class="update-banner-actions">
+    <button type="button" id="btnUpdateLater" class="btn-link-inline">Nanti</button>
+    <button type="button" id="btnUpdateNow" class="btn btn-primary btn-small">Update Sekarang</button>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/departemen-data.js"></script>
+<script src="js/foto-compress.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/api.js"></script>
+<script src="js/router.js"></script>
+<script src="js/reservasi.js"></script>
+<script src="js/spk.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
