@@ -184,15 +184,37 @@ function spkFotoHtml_(url, label) {
   const thumb = driveThumbUrl_(url, 800);
   const zoom = driveThumbUrl_(url, 1600);
   if (thumb) {
-    // href ke versi thumbnail lebih besar (bukan url Drive asli) -> klik foto
-    // buka tab baru yang langsung nampilin gambar, TANPA diminta login/pilih
-    // akun Google (beda dari sebelumnya yang link ke share url Drive asli).
+    // Zoom dibuka LEWAT LIGHTBOX DI DALAM APP (lihat openFotoZoom di bawah),
+    // BUKAN link <a> ke drive.google.com — ternyata link Drive langsung
+    // (bahkan endpoint thumbnail) TETAP minta "Select an account" kalau
+    // dibuka sebagai navigasi/tab baru, walau filenya sudah di-share
+    // ANYONE_WITH_LINK (beda dgn <img src> yang aman, itu kenapa preview-nya
+    // bisa tampil tapi klik buat zoom malah ke Gdrive).
     // Label ditampilkan sebagai caption TEKS di atas foto (sebelumnya cuma
     // ada di atribut alt yang tidak kelihatan sama sekali di halaman biasa —
     // ini yang bikin Bos gabisa bedain mana Foto Sebelum vs Foto Selesai).
-    return `<div class="spk-foto-row"><div class="spk-foto-block"><div class="spk-foto-caption">${label}</div><a href="${zoom}" target="_blank" rel="noopener"><img src="${thumb}" class="foto-upload-preview" alt="${label}"></a></div></div>`;
+    return `<div class="spk-foto-row"><div class="spk-foto-block"><div class="spk-foto-caption">${label}</div><img src="${thumb}" class="foto-upload-preview" alt="${label}" data-zoom-src="${zoom}"></div></div>`;
   }
   return `<div class="spk-foto-row"><div class="spk-foto-block"><div class="spk-foto-caption">${label}</div><p><a href="${url}" target="_blank" rel="noopener">Lihat ${label}</a></p></div></div>`;
+}
+
+// Lightbox foto DI DALAM app — lihat komentar di spkFotoHtml_ di atas soal
+// kenapa TIDAK lagi navigasi ke drive.google.com buat "zoom".
+function openFotoZoom(url) {
+  if (!url) return;
+  document.getElementById('fotoZoomImg').src = url;
+  document.getElementById('fotoZoomOverlay').hidden = false;
+}
+function closeFotoZoom() {
+  document.getElementById('fotoZoomOverlay').hidden = true;
+  document.getElementById('fotoZoomImg').src = '';
+}
+function wireFotoZoom() {
+  document.getElementById('fotoZoomOverlay').addEventListener('click', closeFotoZoom);
+  document.getElementById('btnCloseFotoZoom').addEventListener('click', (e) => { e.stopPropagation(); closeFotoZoom(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !document.getElementById('fotoZoomOverlay').hidden) closeFotoZoom();
+  });
 }
 
 async function openSpkDetail(idSpk, dataList) {
@@ -210,6 +232,9 @@ async function openSpkDetail(idSpk, dataList) {
     ${spkFotoHtml_(spk.fotoSelesai, 'Foto Selesai')}
     <div id="spkDetailLogList"><div class="empty-state">Memuat riwayat...</div></div>
   `;
+  body.querySelectorAll('[data-zoom-src]').forEach((img) => {
+    img.addEventListener('click', () => openFotoZoom(img.dataset.zoomSrc));
+  });
   document.getElementById('spkDetailModalBackdrop').hidden = false;
   document.getElementById('spkDetailModal').hidden = false;
 
@@ -253,5 +278,6 @@ function initSpkPage() {
     wireSpkFotoUpload();
     wireSpkForm();
     wireSpkDetailModal();
+    wireFotoZoom();
   }
 }
