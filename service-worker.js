@@ -4,7 +4,7 @@
 // dapat notif "Versi baru tersedia".
 // ============================================================================
 
-const APP_VERSION = '1.0.9';
+const APP_VERSION = '1.1.0';
 const CACHE_NAME = 'v-' + APP_VERSION;
 const APP_SHELL = [
   './',
